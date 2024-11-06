@@ -1,5 +1,13 @@
-EN ESTE README VAN COMENTARIOS SOBRE
-RECURSOS QUE ESTOY UTILIZANDO
+EN ESTE README VAN COMENTARIOS SOBRE EL CODIGO DEL PROYECTO
+
+En el PRIMER COMMIT hay un codigo que entregandole un root y password sql
+y un nombre de base de datos sql, ejecuta todo el codigo.
+Mediante un web scraping muy basico pregunta por un sitio web, lo scrapea
+y envia los datos escrapeados a java, que los guarda en una tabla sql
+Luego java toma los datos de esa tabla y los despliega por pantalla.
+
+
+COMENTARIOS SOBRE RECURSOS QUE ESTOY UTILIZANDO
 La idea no era crearlos para otros pero si les sirve de algo se los paso
 
 COMO OBTENER combinado.txt
@@ -10,4 +18,5 @@ y alli abrir las aplicaciones de Python que yo hice
 usar la que se llama combine_text_files.py
 hay que tomar la ruta del README y pegarla en la ejecución
 La IA tambien me hizo una version en Java que funciona bien 
+
 
