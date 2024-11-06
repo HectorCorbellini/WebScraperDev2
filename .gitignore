@@ -3,11 +3,6 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-# files to be ignored
-src/main/resources/application.properties
-combinado.txt
-readme
-
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
@@ -22,7 +17,6 @@ readme
 .classpath
 .factorypath
 .project
-
 .settings
 .springBeans
 .sts4-cache
@@ -41,4 +35,4 @@ build/
 .vscode/
 
 ### Mac OS ###
-.DS_Store 1
+.DS_Store
