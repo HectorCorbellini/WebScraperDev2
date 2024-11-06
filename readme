@@ -3,6 +3,8 @@ RECURSOS QUE ESTOY UTILIZANDO
 La idea no era crearlos para otros pero si les sirve de algo se los paso
 
 COMO OBTENER combinado.txt
+combinado.txt es un join de todas las clase java del proyecto
+sirve para enviarselas todas juntas a una IA para hacerle preguntas sobre el codigo
 abrir VisualStudioCode
 y alli abrir las aplicaciones de Python que yo hice
 usar la que se llama combine_text_files.py
