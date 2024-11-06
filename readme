@@ -1,6 +1,11 @@
+EN ESTE README VAN COMENTARIOS SOBRE
+RECURSOS QUE ESTOY UTILIZANDO
+La idea no era crearlos para otros pero si les sirve de algo se los paso
+
 COMO OBTENER combinado.txt
 abrir VisualStudioCode
 y alli abrir las aplicaciones de Python que yo hice
 usar la que se llama combine_text_files.py
 hay que tomar la ruta del README y pegarla en la ejecución
+La IA tambien me hizo una version en Java que funciona bien 
 
