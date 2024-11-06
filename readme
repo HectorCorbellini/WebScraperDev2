@@ -6,6 +6,45 @@ Mediante un web scraping muy basico pregunta por un sitio web, lo scrapea
 y envia los datos escrapeados a java, que los guarda en una tabla sql
 Luego java toma los datos de esa tabla y los despliega por pantalla.
 
+DESCRIPCION DE LO HECHO EN ESTE CODIGO DE ACUERDO A LA IA
+(esta informacion debe ir actualizandose en cada commit)
+This code represents a web scraping program using Spring Boot to scrape data from a given URL, 
+store it in a MySQL database, and retrieve it for display. Here's an overview of each component and the program's workflow:
+
+    Configuration (application.properties):
+        Defines the connection parameters for MySQL, including database name (dropi_webscraping_db), URL, username, password, and driver class.
+
+    Database Management (DatabaseManager.java):
+        Handles database operations:
+            Database Initialization: Creates the database and a scraped_data table (with id, url, and text columns) if they don't exist.
+            Data Insertion: Inserts scraped data into the scraped_data table, truncating URL and text values if they exceed specified lengths (2048 and 1024 characters, respectively).
+            Data Retrieval: Fetches all records from the scraped_data table to return the scraped URLs and associated text content.
+
+    Web Scraping (DataScraper.java):
+        Uses the Jsoup library to scrape data from a specified URL. It retrieves all anchor (<a>) elements with an href attribute, collecting the absolute URL (abs:href) and the anchor text (link.text()). This scraped data is stored in a list of string arrays, each array representing a URL and its text content.
+
+    Data Display (DataDisplay.java):
+        Retrieves and prints stored scraped data from the database to the console. For each row, it outputs the URL and its associated text.
+
+    Main Application (StaticScraper.java):
+        This is the entry point of the application, implementing CommandLineRunner to run the program from the command line. It performs the following steps:
+            Database Initialization: Ensures the database and table are set up.
+            User Input: Prompts the user to enter a URL to scrape.
+            Data Scraping: Calls scrapeData on the specified URL.
+            Data Storage: Stores the scraped data in the database.
+            Data Display: Retrieves and displays the stored data.
+
+Program Workflow
+
+When run, the program:
+    Sets up the MySQL database and table.
+    Asks the user for a URL to scrape.
+    Uses Jsoup to collect URLs and link texts from the provided webpage.
+    Saves the scraped data to the MySQL database.
+    Retrieves and displays all entries in the scraped_data table.
+
+This setup provides a foundation for scraping, storing, and displaying web data, with the potential for further customization to support different data sources, dynamic elements, or advanced filtering.
+
 
 COMENTARIOS SOBRE RECURSOS QUE ESTOY UTILIZANDO
 La idea no era crearlos para otros pero si les sirve de algo se los paso
