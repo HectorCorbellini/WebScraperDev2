@@ -1,8 +1,6 @@
-Primer web scrapper
-Sencillo dado por chatGPT
-se supone que anda pero es muy primitivo
-y no considera desarrollador 1, desarrollador 2, etc
+COMO OBTENER combinado.txt
+abrir VisualStudioCode
+y alli abrir las aplicaciones de Python que yo hice
+usar la que se llama combine_text_files.py
+hay que tomar la ruta del README y pegarla en la ejecución
 
-tiene diseño para soportar base de datos
-pero no esta ajusatdo
-entonces despliega por pantalla los datos escrapeados
