@@ -35,7 +35,7 @@ public class StaticScraper implements CommandLineRunner {
         System.out.print("Enter the URL to scrape: ");
         String url = scanner.nextLine();
 
-        // Scrape data
+        // Scrape data, will be modified by developer 1
         List<String[]> scrapedData = scraper.scrapeData(url);
 
         // Save scraped data to database
@@ -43,12 +43,5 @@ public class StaticScraper implements CommandLineRunner {
 
         // Display data from the database
         dataDisplay.displayData();
-
-        // Optional: Delay exit to allow viewing of data
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
