@@ -1,0 +1,190 @@
+
+--- Contents of src/main/java/org/scraping/DatabaseManager.java ---
+
+package org.scraping;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class DatabaseManager {
+
+    @Value("${spring.datasource.url}")
+    private String dbUrl;
+
+    @Value("${spring.datasource.username}")
+    private String dbUsername;
+
+    @Value("${spring.datasource.password}")
+    private String dbPassword;
+
+    @Value("${spring.datasource.database-name}") // New property for database name
+    private String dbName; // Field to hold the database name
+
+    // Create the database and table if they don't exist
+    public void initializeDatabase() {
+        String dbUrlWithoutDb = "jdbc:mysql://localhost:3306/";
+
+        try (Connection conn = DriverManager.getConnection(dbUrlWithoutDb, dbUsername, dbPassword);
+             Statement stmt = conn.createStatement()) {
+            // Check and create database if it doesn't exist
+            String createDbSQL = "CREATE DATABASE IF NOT EXISTS " + dbName;
+            stmt.executeUpdate(createDbSQL);
+            System.out.println("Database checked or created successfully.");
+        } catch (SQLException e) { e.printStackTrace(); }
+
+        // Connect to the specific database to create the table if needed
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+             Statement stmt = conn.createStatement()) {
+            String createTableSQL = "CREATE TABLE IF NOT EXISTS scraped_data (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                    "url VARCHAR(2048), " +
+                    "text VARCHAR(1024))";
+            stmt.executeUpdate(createTableSQL);
+            System.out.println("Table 'scraped_data' checked or created successfully.");
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    // Save scraped data to the database
+    public void saveData(List<String[]> data) {
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
+            String insertSQL = "INSERT INTO scraped_data (url, text) VALUES (?, ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
+                for (String[] row : data) {
+                    pstmt.setString(1, row[0].length() > 2048 ? row[0].substring(0, 2048) : row[0]);
+                    pstmt.setString(2, row[1].length() > 1024 ? row[1].substring(0, 1024) : row[1]);
+                    pstmt.executeUpdate();
+                }
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    // Retrieve data from the database
+    public List<String[]> getData() {
+        List<String[]> data = new ArrayList<>();
+        String query = "SELECT url, text FROM scraped_data";
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                data.add(new String[]{rs.getString("url"), rs.getString("text")});
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return data;
+    }
+}
+
+
+--- Contents of src/main/java/org/scraping/StaticScraper.java ---
+
+// StaticScraper.java
+package org.scraping;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.util.List;
+import java.util.Scanner;
+
+@SpringBootApplication
+public class StaticScraper implements CommandLineRunner {
+
+    @Autowired
+    private DatabaseManager dbManager;
+
+    @Autowired
+    private DataScraper scraper;
+
+    @Autowired
+    private DataDisplay dataDisplay;
+
+    public static void main(String[] args) {
+        SpringApplication.run(StaticScraper.class, args);
+    }
+
+    @Override
+    public void run(String... args) {
+        // Initialize the database
+        dbManager.initializeDatabase();
+
+        // Get URL from the user
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the URL to scrape: ");
+        String url = scanner.nextLine();
+
+        // Scrape data, will be modified by developer 1
+        List<String[]> scrapedData = scraper.scrapeData(url);
+
+        // Save scraped data to database
+        dbManager.saveData(scrapedData);
+
+        // Display data from the database
+        dataDisplay.displayData();
+    }
+}
+
+
+--- Contents of src/main/java/org/scraping/DataDisplay.java ---
+
+package org.scraping;
+
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class DataDisplay {
+    private DatabaseManager dbManager;
+
+    public DataDisplay(DatabaseManager dbManager) {
+        this.dbManager = dbManager;
+    }
+    // display data in the console
+    public void displayData() {
+        List<String[]> data = dbManager.getData();
+        // Log each data row
+        for (String[] row : data) {
+            System.out.println("URL: " + row[0] + ", Text: " + row[1]);
+        }
+    }
+}
+
+
+--- Contents of src/main/java/org/scraping/DataScraper.java ---
+
+package org.scraping;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class DataScraper {
+
+    // Method to scrape data from a given URL
+    public List<String[]> scrapeData(String url) {
+        List<String[]> data = new ArrayList<>();
+        try {
+            Document doc = Jsoup.connect(url).get();
+            Elements links = doc.select("a[href]");
+            for (Element link : links) {
+                data.add(new String[]{ link.attr("abs:href"), link.text() });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+}
+
